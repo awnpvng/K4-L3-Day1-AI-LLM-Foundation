@@ -15,8 +15,7 @@ Gọi `call_openai` với temperature 0.0, 0.5, 1.0 và 1.5 dùng prompt
 **"Hãy kể cho tôi một sự thật thú vị về Việt Nam."**
 
 **Bạn nhận thấy quy luật gì qua bốn phản hồi?** (2–3 câu)
-> Ở temperature 0.0–1.0, cả ba phản hồi đều tập trung vào cùng một chủ đề với câu chữ mạch lạc, chỉ khác nhau ở cách diễn đạt và mức độ chi tiết. Đến temperature 1.5, phản hồi bắt đầu xuất hiện lỗi rõ rệt — chữ bị ghép sai -> model lấy mẫu ngẫu nhiên hơn hẳn, tăng tính đa dạng nhưng cũng tăng rủi ro thiếu mạch lạc.
->=> Temperature càng cao -> output càng ít và lặp lại/ít an toàn nhưng đổi lại độ ổn định và chất lượng ngôn ngữ càng giảm.
+> Ở temperature 0.0–1.0, các phản hồi vẫn tập trung vào cùng chủ đề và khá mạch lạc, nhưng cách diễn đạt, ví dụ và mức độ chi tiết có thể khác nhau. Khi tăng lên 1.5, phản hồi thường đa dạng và khó đoán hơn, đồng thời có thể xuất hiện nội dung lan man hoặc kém mạch lạc. Nhìn chung, temperature càng cao thì tính sáng tạo tăng nhưng độ ổn định và khả năng kiểm soát đầu ra giảm.
 
 ### Câu 1.2 — Chọn temperature cho sản phẩm
 **Bạn sẽ đặt temperature bao nhiêu cho chatbot hỗ trợ khách hàng, và tại sao?**
@@ -43,7 +42,7 @@ Gọi `chat_with_system_prompt` hai lần với cùng câu hỏi
 
 **Hai phản hồi khác nhau như thế nào (độ dài, từ vựng, ví dụ)? System prompt
 ảnh hưởng đến hành vi model ra sao?** (3–4 câu)
-> Phản hồi "giáo viên tiểu học" (~191 từ) dùng ví dụ đời thường — so sánh blockchain với "cuốn sổ nhật ký" mà cả lớp cùng giữ một bản giống nhau — câu ngắn, từ vựng đơn giản, giọng thân thiện ("Chào con!"). Phản hồi "chuyên gia tài chính" (~176 từ) dùng thuật ngữ kỹ thuật chuyên sâu như "sổ cái phân tán (DLT)", "mạng ngang hàng (P2P)", "bài toán tướng Byzantine", trình bày có cấu trúc mục rõ ràng. Cùng một câu hỏi nhưng hai câu trả lời khác hẳn nhau về độ khó, ví dụ minh họa và văn phong — chứngtỏ system prompt định hình rất mạnh vai trò, giọng điệu và mức độ chuyên môn của model mà không cần đổi câu hỏi của người dùng.
+> Phản hồi theo persona giáo viên tiểu học dùng câu ngắn, từ vựng đơn giản và ví dụ đời thường, chẳng hạn ví blockchain như một cuốn sổ mà nhiều người cùng giữ một bản giống nhau. Phản hồi theo persona chuyên gia tài chính dùng các thuật ngữ chuyên môn như "sổ cái phân tán (DLT)" và "mạng ngang hàng (P2P)", đồng thời trình bày sâu hơn. Vì vậy, system prompt định hình vai trò, giọng điệu, mức độ chuyên môn và cách lựa chọn ví dụ của model, dù câu hỏi người dùng không thay đổi.
 
 ### Câu 2.2 — tiktoken vs đếm từ
 Chọn một đoạn văn tiếng Việt ~100 từ. So sánh số token theo `count_tokens`
@@ -51,7 +50,7 @@ Chọn một đoạn văn tiếng Việt ~100 từ. So sánh số token theo `co
 
 **Hai con số chênh nhau bao nhiêu phần trăm? Vì sao tiếng Việt thường tốn
 nhiều token hơn tiếng Anh cùng độ dài?**
-> Với đoạn văn 113 từ trong `run_exercises.py` (Câu 2.2), ước lượng "số từ / 0.75" cho ra 151 token, còn tiktoken (encoding của gpt-4o) đếm được 150 token — chênh lệch chỉ khoảng **-0.4%**, gần như trùng khớp cho đoạn văn cụ thể này. Tuy vậy, về nguyên tắc chung tiếng Việt thường tốn nhiều token hơn tiếng Anh cùng độ dài vì bộ mã hoá BPE của các model này được huấn luyện chủ yếu trên văn bản tiếng Anh: các ký tự có dấu (ví dụ "ă", "ệ", "ương") không có sẵn thành một token trọn vẹn nên hay bị tách thành nhiều token con hoặc byte UTF-8, khiến trung bình số token/từ của tiếng Việt cao hơn — công thức "số từ / 0.75" vốn được hiệu chỉnh theo tiếng Anh nên chỉ mang tính tham khảo, không chính xác bằng đếm thật bằng tiktoken.
+> Với đoạn văn 113 từ, ước lượng "số từ / 0.75" cho ra khoảng 151 token, còn `tiktoken` của GPT-4o đếm được 150 token. Chênh lệch là khoảng 0,66%, gần như trùng khớp trong đoạn văn cụ thể này. Tuy vậy, tiếng Việt thường tốn nhiều token hơn tiếng Anh cùng độ dài vì các từ và ký tự có dấu thường bị bộ mã hóa tách thành nhiều token con; công thức "số từ / 0.75" được ước lượng chủ yếu theo tiếng Anh nên chỉ mang tính tham khảo.
 
 ---
 
